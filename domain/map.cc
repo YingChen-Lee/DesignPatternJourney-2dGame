@@ -29,7 +29,7 @@ void Map::Print() const {
 }
 
 int Map::GetSize() const {
-    assert(map_.size() > 0);
+    assert(map_.size() > 0 && "map_ is empty!");
     return map_.size() * map_[0].size();
 }
 
@@ -43,8 +43,9 @@ std::optional<Position> Map::GetRandomVacancy() const {
     return *it;
 }
 
-void Map::AddMapObjectToPosition(std::unique_ptr<MapObject> object, Position position) {
-    assert(map_[position.x][position.y] == nullptr);
+void Map::AddMapObjectToPosition(MapObject* object, Position position) {
+    assert(object != nullptr && "object is nullptr when inserting to map!");
+    assert(map_[position.x][position.y] == nullptr && "position is not vacant when inserting an object!");
     vacancies_.erase(position);
-    map_[position.x][position.y] = std::move(object);
+    map_[position.x][position.y] = object;
 }

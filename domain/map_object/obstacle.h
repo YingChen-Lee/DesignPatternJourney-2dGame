@@ -4,5 +4,5 @@
 
 class Obstacle : public MapObject{
 public:
-    Obstacle(Position position) : MapObject(position, 'O') {}
+    Obstacle(Position position) : MapObject(position, 'O', MapObjectType::kObstacle) {}
 };

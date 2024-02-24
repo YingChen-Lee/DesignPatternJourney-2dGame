@@ -3,62 +3,69 @@
 #include <cassert>
 #include <iostream>
 
-RandomMapGenerator::RandomMapGenerator() {
+RandomMapGenerator::RandomMapGenerator(Map* map) : map_(map) {
     // total rate = 10. The rest is vacant.
-    assert(monster_rate_ + treasure_rate_ + obstacle_rate_ < 10);
+    assert(monster_rate_ + treasure_rate_ + obstacle_rate_ < 10 && "Total rate should be less than 10");
 }
 
-std::vector<Monster*> RandomMapGenerator::GenerateMonsters(Map* map) {
-    std::vector<Monster*> monsters;
-    int monster_count = map->GetSize() * monster_rate_ / 10;
+std::vector<std::unique_ptr<Monster>> RandomMapGenerator::GenerateMonsters() {
+    std::vector<std::unique_ptr<Monster>> monsters;
+    int monster_count = map_->GetSize() * monster_rate_ / 10;
     for (int i = 0; i < monster_count; i++) {
-        const auto vacancy = map->GetRandomVacancy();
+        const auto vacancy = map_->GetRandomVacancy();
         if (!vacancy.has_value()) {
-            std::cout << "No vacancy for monster\n";
+            std::cout << "No vacancy for monster, can only generate "
+                      << i << " monsters\n";
             break;
         }
         std::unique_ptr<Monster> monster = std::make_unique<Monster>(vacancy.value());
-        monsters.push_back(monster.get());
-        map->AddMapObjectToPosition(std::move(monster), vacancy.value());
+        map_->AddMapObjectToPosition(monster.get(), vacancy.value());
+        monsters.push_back(std::move(monster));
     }
     return monsters;
 }
 
-Character* RandomMapGenerator::GenerateCharacter(Map* map) {
-    const auto vacancy = map->GetRandomVacancy();
-    if (!vacancy.has_value()) {
-        std::cout << "No vacancy for character\n";
-        return nullptr;
-    }
-    std::unique_ptr<Character> character = std::make_unique<Character>(vacancy.value());
-    Character* character_ptr = character.get();
-    map->AddMapObjectToPosition(std::move(character), vacancy.value());
-    return character_ptr;
+std::unique_ptr<Character> RandomMapGenerator::GenerateCharacter() {
+    const auto vacancy = map_->GetRandomVacancy();
+    assert(vacancy.has_value() && "No vacancy for character");
+
+    Direction direction = static_cast<Direction>(rand() % 4);
+    std::unique_ptr<Character> character = std::make_unique<Character>(vacancy.value(), direction);
+    map_->AddMapObjectToPosition(character.get(), vacancy.value());
+    return std::move(character);
 }
 
-void RandomMapGenerator::GenerateTreasures(Map* map) {
-    int treasure_count = map->GetSize() * treasure_rate_ / 10;
+std::vector<std::unique_ptr<Treasure>> RandomMapGenerator::GenerateTreasures() {
+    int treasure_count = map_->GetSize() * treasure_rate_ / 10;
+    std::vector<std::unique_ptr<Treasure>> treasures;
     for (int i = 0; i < treasure_count; i++) {
-        const auto vacancy = map->GetRandomVacancy();
+        const auto vacancy = map_->GetRandomVacancy();
         if (!vacancy.has_value()) {
-            std::cout << "No vacancy for treasure\n";
-            return;
+            std::cout << "No vacancy for treasure, can only generate "
+                      << i << " treasures\n";
+            return treasures;
         }
         std::unique_ptr<Treasure> treasure = Treasure::Create(vacancy.value());
-        map->AddMapObjectToPosition(std::move(treasure), vacancy.value());
+        map_->AddMapObjectToPosition(treasure.get(), vacancy.value());
+        treasures.push_back(std::move(treasure));
     }
+    return treasures;
 }
 
-void RandomMapGenerator::GenerateObstacles(Map* map) {
-    int obstacle_count = map->GetSize() * obstacle_rate_ / 10;
+std::vector<std::unique_ptr<Obstacle>> RandomMapGenerator::GenerateObstacles() {
+    int obstacle_count = map_->GetSize() * obstacle_rate_ / 10;
+    std::vector<std::unique_ptr<Obstacle>> obstacles;
     for (int i = 0; i < obstacle_count; i++) {
-        const auto vacancy = map->GetRandomVacancy();
+        const auto vacancy = map_->GetRandomVacancy();
         if (!vacancy.has_value()) {
-            std::cout << "No vacancy for obstacle\n";
-            return;
+            std::cout << "No vacancy for obstacle, can only generate "
+                      << i << " treasures\n";
+            return obstacles;
         }
         std::unique_ptr<Obstacle> obstacle = std::make_unique<Obstacle>(vacancy.value());
-        map->AddMapObjectToPosition(std::move(obstacle), vacancy.value());
+        map_->AddMapObjectToPosition(obstacle.get(), vacancy.value());
+        obstacles.push_back(std::move(obstacle));
     }
+    return obstacles;
 }
 

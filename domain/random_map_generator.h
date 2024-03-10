@@ -3,6 +3,7 @@
 
 #include "common.h"
 #include "map.h"
+#include "map_object/role/role.h"
 #include "map_object/role/character.h"
 #include "map_object/role/monster.h"
 #include "map_object/obstacle.h"
@@ -16,8 +17,8 @@
 class RandomMapGenerator {
 public:
     RandomMapGenerator(Map* map);
-    std::vector<std::unique_ptr<Monster>> GenerateMonsters();
-    std::unique_ptr<Character> GenerateCharacter();
+    std::vector<std::unique_ptr<Monster>> GenerateMonsters(Role::RemoveObjectDelegate* delegate);
+    std::unique_ptr<Character> GenerateCharacter(Role::RemoveObjectDelegate* delegate);
     std::vector<std::unique_ptr<Treasure>> GenerateTreasures();
     std::vector<std::unique_ptr<Obstacle>> GenerateObstacles();
 

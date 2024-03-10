@@ -3,6 +3,8 @@
 #include <cassert>
 #include <iostream>
 
+#include "spdlog/spdlog.h"
+
 Map::Map(int width, int height) {
     map_.resize(height);
     for (auto& row : map_) {
@@ -48,4 +50,23 @@ void Map::AddMapObjectToPosition(MapObject* object, Position position) {
     assert(map_[position.x][position.y] == nullptr && "position is not vacant when inserting an object!");
     vacancies_.erase(position);
     map_[position.x][position.y] = object;
+}
+
+const MapObject* Map::GetConstMapObjectAtPosition(Position position) const {
+    return map_[position.x][position.y];
+}
+
+MapObject* Map::GetMapObjectAtPosition(Position position) {
+    return map_[position.x][position.y];
+}
+
+bool Map::IsInRange(Position position) const {
+    return position.x >= 0 && position.x < map_.size() && position.y >= 0 && position.y < map_[0].size();
+}
+
+void Map::RemoveMapObjectAtPosition(Position position) {
+    spdlog::debug("{}, position: {}", __PRETTY_FUNCTION__, position.ToString());
+    assert(map_[position.x][position.y] != nullptr && "position is vacant when removing an object!");
+    vacancies_.insert(position);
+    map_[position.x][position.y] = nullptr;
 }

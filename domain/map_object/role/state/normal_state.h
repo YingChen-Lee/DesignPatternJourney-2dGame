@@ -4,7 +4,8 @@
 
 class NormalState : public State {
 public:
-    NormalState() = default;
+    NormalState(Role* role);
+    virtual ~NormalState() = default;
 
     StateType GetStateType() const override;
 

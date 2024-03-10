@@ -21,6 +21,10 @@ public:
     int GetSize() const;
     std::optional<Position> GetRandomVacancy() const;
     void AddMapObjectToPosition(MapObject* object, Position position);
+    const MapObject* GetConstMapObjectAtPosition(Position position) const;
+    MapObject* GetMapObjectAtPosition(Position position);
+    bool IsInRange(Position position) const;
+    void RemoveMapObjectAtPosition(Position position);
 
 private:
     std::vector<std::vector<MapObject*>> map_;

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cassert>
+
 #include "common.h"
 
 enum class MapObjectType {
@@ -7,6 +9,22 @@ enum class MapObjectType {
     kObstacle,
     kTreasure
 };
+
+namespace {
+std::string MapObjectTypeToString(MapObjectType map_object_type) {
+    switch (map_object_type) {
+        case MapObjectType::kRole:
+            return "Role";
+        case MapObjectType::kObstacle:
+            return "Obstacle";
+        case MapObjectType::kTreasure:
+            return "Treasure";
+        default:
+            assert(false && "Unknown MapObjectType");
+            return "";
+    }
+}
+}  // namespace
 
 class MapObject {
 public:

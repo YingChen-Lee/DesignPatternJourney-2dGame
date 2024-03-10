@@ -6,9 +6,9 @@
 #include "map.h"
 #include "map_object/treasure.h"
 #include "map_object/obstacle.h"
+#include "map_object/role/role.h"
 #include "map_object/role/character.h"
 #include "map_object/role/monster.h"
-#include "remove_object_delegate.h"
 
 /**
  * Game is responsible for :
@@ -17,13 +17,13 @@
  * - The destruction of the map objects
  * - Representing the game state to outer layers
 */
-class Game : public RemoveObjectDelegate {
+class Game : public Role::RemoveObjectDelegate {
 public:
     Game(int width, int height);
     ~Game() override = default;
     void StartRandomGame();
 
-    // RemoveObjectDelegate
+    // Role::RemoveObjectDelegate
     void RemoveObject(MapObject* object) override;
 private:
     void Init();

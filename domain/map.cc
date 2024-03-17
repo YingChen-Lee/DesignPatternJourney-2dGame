@@ -46,6 +46,7 @@ std::optional<Position> Map::GetRandomVacancy() const {
 }
 
 void Map::AddMapObjectToPosition(MapObject* object, Position position) {
+    spdlog::trace("{}, position: {}", __PRETTY_FUNCTION__, position.ToString());
     assert(object != nullptr && "object is nullptr when inserting to map!");
     assert(map_[position.x][position.y] == nullptr && "position is not vacant when inserting an object!");
     vacancies_.erase(position);
@@ -69,4 +70,12 @@ void Map::RemoveMapObjectAtPosition(Position position) {
     assert(map_[position.x][position.y] != nullptr && "position is vacant when removing an object!");
     vacancies_.insert(position);
     map_[position.x][position.y] = nullptr;
+}
+
+void Map::MoveMapObject(MapObject* object, Position next_position) {
+    spdlog::debug("{}, position: {}", __PRETTY_FUNCTION__, next_position.ToString());
+    assert(IsInRange(next_position) && "next_position is out of range!");
+    assert(map_[next_position.x][next_position.y] == nullptr && "next_position is not vacant when moving an object!");
+    RemoveMapObjectAtPosition(object->get_position());
+    AddMapObjectToPosition(object, next_position);
 }

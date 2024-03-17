@@ -23,8 +23,46 @@ Character::Character(Position position, Direction direction,
 }
 
 void Character::Move(std::vector<Direction> available_directions) {
-    // TODO
-    return;
+    std::cout << "Choose a direction to move: (U/D/L/R)" << std::endl;
+    char choice;
+    std::cin >> choice;
+    Direction dir;
+    switch (choice) {
+        case 'U':
+            dir = Direction::kUp;
+            break;
+        case 'D':
+            dir = Direction::kDown;
+            break;
+        case 'L':
+            dir = Direction::kLeft;
+            break;
+        case 'R':
+            dir = Direction::kRight;
+            break;
+        default:
+            std::cout << "Invalid input. Please enter U/D/L/R." << std::endl;
+            Move(available_directions);
+            return;
+    }
+
+    direction_ = dir;
+    set_symbol(direction_to_symbol_[direction_]);
+
+    const auto [del_x, del_y] = GetDeltaByDirection(direction_);
+    Position next_position = Position(get_position().x + del_x, get_position().y + del_y);
+    spdlog::debug("next_position: {}", next_position.ToString());
+    if (!map_->IsInRange(next_position)) {
+        return;
+    }
+
+    // Touch will be applied, but it's possible that this character cannot move
+    // to that place. Example use case: the place is occupied by an object or
+    // a monster.
+    bool can_move_to_position = Touch(map_->GetMapObjectAtPosition(next_position));
+    if (can_move_to_position) {
+        MoveToPosition(next_position);
+    }
 }
 
 void Character::NormalAttack() {

@@ -26,6 +26,13 @@ public:
     bool IsInRange(Position position) const;
     void RemoveMapObjectAtPosition(Position position);
 
+    /**
+     * Move the object to the next position.
+     * @note the next_position should be a vacancy, since Map
+     *       is not responsible for the interaction between objects.
+    */
+    void MoveMapObject(MapObject* object, Position next_position);
+
 private:
     std::vector<std::vector<MapObject*>> map_;
     std::set<Position> vacancies_;

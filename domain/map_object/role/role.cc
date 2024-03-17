@@ -37,8 +37,13 @@ StateType Role::GetStateType() const {
 }
 
 bool Role::Touch(MapObject* touched_object) {
-    assert(touched_object != nullptr && "touched_object is nullptr!");
-    if (touched_object->get_map_object_type() == MapObjectType::kRole) {
+    spdlog::debug("{}, role_name_: {}, touched_object type: {}",
+                  __PRETTY_FUNCTION__,
+                  role_name_,
+                  MapObjectTypeToString(touched_object->get_map_object_type()));
+    if (touched_object == nullptr) {
+        return true;
+    } else if (touched_object->get_map_object_type() == MapObjectType::kRole) {
         std::cout << "Cannot touch a role!" << std::endl;
         return false;
     } else if (touched_object->get_map_object_type() == MapObjectType::kObstacle) {
@@ -70,14 +75,20 @@ void Role::StartRound() {
 void Role::MoveOrAttack() {
     spdlog::debug("{}, role_name_: {}", __PRETTY_FUNCTION__, role_name_);
 
-    // TODO
     if (ChooseToAttack()) {
-        //TODO
+        std::cout << "Role: " << role_name_ << " chooses to attack." << std::endl;
         state_->Attack();
     } else {
-        //TODO
-        Move({});
+        std::cout << "Role: " << role_name_ << " chooses to move." << std::endl;
+        Move({Direction::kUp, Direction::kDown, Direction::kLeft, Direction::kRight});
     }
+}
+
+void Role::MoveToPosition(Position position) {
+    spdlog::debug("{}, role_name_: {}, position: {}",
+                  __PRETTY_FUNCTION__, role_name_, position.ToString());
+    assert(map_->IsInRange(position) && "position is out of range!");
+    map_->MoveMapObject(this, position);
 }
 
 void Role::OnAttacked(int damage) {

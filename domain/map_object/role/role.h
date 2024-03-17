@@ -45,8 +45,11 @@ public:
     Map* get_map() const { return map_; }
 
     /**
-     * touched_object cannot be a nullptr
-     * return true if the touch is valid (i.e. touched_object is not a role)
+     * touched_object can be a nullptr, but nothing will happen.
+     * @note The touched_object might be removed from the map.
+     * @return true if the role can move to the position, false otherwise.
+     *         E.g. if touched_object is a role or an obstacle, return false.
+     *              if touched_object is a treasure or null, return true.
     */
     bool Touch(MapObject* touched_object);
 
@@ -68,11 +71,27 @@ public:
     virtual bool ChooseToAttack() const = 0;
 
     /**
-     * The role can move to one of the available directions.
+     * From one of the available directions, the role can choose
+     * where to move.
      * @param available_directions The directions the role can move to
      * @note If no available directions, the role will not move.
+     * @note It's not guaranteed that the role will be able to move to
+     *       the direction, because there might be obstacles or other roles.
     */
     virtual void Move(std::vector<Direction> available_directions) = 0;
+
+    /**
+     * Force the role to move to a certain position.
+     *
+     * No action will be taken if:
+     * - If the position is occupied by another role or an obstacle.
+     * - If the position is out of range.
+     *
+     * Action will be taken if:
+     *
+     * @param position The position the role will move to.
+    */
+    void MoveToPosition(Position position);
 
     /**
      * The default way for the role to attack.

@@ -51,4 +51,18 @@ std::pair<int, int> GetDeltaByDirection(Direction direction) {
     }
     return {0, 0};
 }
+
+std::string DirectionToString(Direction direction) {
+    switch (direction) {
+        case Direction::kUp:
+            return "Up";
+        case Direction::kDown:
+            return "Down";
+        case Direction::kLeft:
+            return "Left";
+        case Direction::kRight:
+            return "Right";
+    }
+    return "Unknown";
+}
 }  // namespace

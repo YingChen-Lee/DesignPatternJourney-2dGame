@@ -83,6 +83,7 @@ bool State::HasEnemyInRange() const {
 
 void State::OnAttacked(int damage) {
     role_->LoseHp(damage);
+    // TODO
     // Enter invincible state
     return;
 }
